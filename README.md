@@ -1,13 +1,45 @@
-# Arduino Chess Clock with Move Recording
+# นาฬิกาหมากรุกด้วย Arduino
 
-## 📌 Overview
+โปรเจกต์นาฬิกาหมากรุกสำหรับผู้เล่น 2 คน ใช้บอร์ด Arduino Uno R3 ร่วมกับจอ LCD และปุ่มกด เพื่อควบคุมเวลาของผู้เล่นแต่ละฝ่าย โดยมีแนวทางต่อยอดให้เชื่อมต่อกับ Python สำหรับบันทึกตาเดินและถ่ายภาพกระดานเพื่อวิเคราะห์เกมภายหลัง
 
-This project is designed to manage player time and simplify move recording in a chess game.
+## ฟีเจอร์หลัก
 
-When Player 1 or Player 2 completes a move, they press a button to stop their timer and start the opponent’s timer. The system uses an Arduino Uno R3 to send button input data to Python, which records each move and triggers image capture for every turn.
+- แสดงเวลาคงเหลือของผู้เล่นทั้งสองฝ่ายบนจอ LCD ขนาด 16×2 ในรูปแบบ `MM:SS` พร้อมสัญลักษณ์บอกฝ่ายที่กำลังจับเวลา
+- เลือกฝ่ายที่กำลังจับเวลาผ่านปุ่มเพิ่มเติม: ปุ่มที่ขา `A1` เริ่มนับเวลาของผู้เล่น 1 และปุ่มที่ขา `A2` เริ่มนับเวลาของผู้เล่น 2
+- ตั้งเวลาเริ่มต้นแยกสำหรับผู้เล่นแต่ละฝ่ายได้ตั้งแต่ 1–99 นาที โดยค่าเริ่มต้นคือฝ่ายละ 5 นาที
+- เปิดเมนูตั้งเวลาด้วยปุ่ม `SELECT` เลือกผู้เล่นด้วย `LEFT` / `RIGHT` ปรับเวลาด้วย `UP` / `DOWN` และกด `SELECT` อีกครั้งเพื่อกลับสู่หน้าจอนาฬิกา
+- หยุดจับเวลาชั่วคราวด้วยปุ่ม `UP` ขณะอยู่ที่หน้าจอนาฬิกา และเลือกฝ่ายด้วยปุ่ม `A1` หรือ `A2` เพื่อจับเวลาต่อ
+- แสดงข้อความจบเกมและระบุผู้แพ้เมื่อเวลาหมด จากนั้นกด `SELECT` เพื่อรีเซ็ตเกม
 
-All move data and captured images are saved to a specified path, allowing for later analysis of gameplay strategies.
+## เทคโนโลยีที่ใช้
 
-## 👤 Owner
+| เทคโนโลยี / อุปกรณ์ | หน้าที่ |
+| --- | --- |
+| Arduino Uno R3 | บอร์ดไมโครคอนโทรลเลอร์เป้าหมายสำหรับควบคุมนาฬิกาและรับค่าปุ่มกด |
+| Arduino C/C++ | ภาษาที่ใช้เขียนสเก็ตช์ `perfect-chess-clock.ino` |
+| ไลบรารี `LiquidCrystal` | ควบคุมจอ LCD ขนาด 16×2 โดยกำหนดขาเป็น `8, 9, 4, 5, 6, 7` ตามลำดับในโค้ด |
+| ปุ่มบนแผง LCD และปุ่มเพิ่มเติม 2 ปุ่ม | อ่านปุ่มเมนูผ่าน `A0` และปุ่มเลือกผู้เล่นผ่าน `A1` / `A2` |
+| ฟังก์ชัน `millis()` ของ Arduino | ใช้คำนวณเวลาที่ผ่านไปและเวลาคงเหลือของผู้เล่น |
 
-**trynabe**
+## โครงสร้างโปรเจกต์
+
+```text
+chess-clock-project/
+├── README.md                # ภาพรวม ฟีเจอร์ และเอกสารอ้างอิงของโปรเจกต์
+└── perfect-chess-clock.ino   # โค้ดนาฬิกา เมนูตั้งเวลา ปุ่มกด และการแสดงผล LCD
+```
+
+## เอกสารที่เกี่ยวข้อง
+
+- [ซอร์สโค้ดนาฬิกาหมากรุก](perfect-chess-clock.ino) — รายละเอียดการกำหนดขา การจับเวลา และการควบคุมเกม
+- [เอกสาร Arduino Uno R3](https://docs.arduino.cc/hardware/uno-rev3/) — ข้อมูลบอร์ดและผังขา
+- [เอกสารไลบรารี LiquidCrystal](https://docs.arduino.cc/libraries/liquidcrystal/) — การใช้งานจอ LCD
+- [เอกสารฟังก์ชัน millis()](https://docs.arduino.cc/language-reference/en/functions/time/millis/) — การอ่านเวลาที่ผ่านไปตั้งแต่บอร์ดเริ่มทำงาน
+
+## สถานะโปรเจกต์
+
+โค้ดในคลังปัจจุบันเป็นส่วนของนาฬิกาบน Arduino ซึ่งมีการแสดงเวลา ตั้งเวลา เลือกฝ่าย หยุดเวลา และรีเซ็ตเกมแล้ว
+
+การเชื่อมต่อกับ Python เพื่อบันทึกตาเดิน ถ่ายภาพกระดานในแต่ละตา และจัดเก็บข้อมูลสำหรับวิเคราะห์เกม เป็นแนวทางพัฒนาต่อตามแนวคิดเดิมของโปรเจกต์ โดยยังไม่มีโค้ด Python หรือการสื่อสารผ่าน Serial ในคลังนี้ นอกจากนี้ยังไม่มีเอกสารการต่อวงจรหรือผลการทดสอบบนฮาร์ดแวร์แนบไว้
+
+**เจ้าของโปรเจกต์:** [trynabe](https://github.com/trynabe)
